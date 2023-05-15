@@ -1,6 +1,6 @@
-#include "ESP8266WiFi.h"
 #include <PubSubClient.h>
 #include <SoftwareSerial.h>
+#include "ESP8266WiFi.h"
 #include "RDM6300.h"
 
 //Parametros de conexão
@@ -68,8 +68,6 @@ void setup(void)
 }
 
 void loop() {if (mqttStatus){
-  client.publish(topic, "{\"TAG\": \"Matheus\"}");
-
   //Apaga o led
   delay(100);
   digitalWrite(Led, HIGH);
@@ -80,9 +78,19 @@ void loop() {if (mqttStatus){
     digitalWrite(Led, LOW);
     
     uint8_t c = RFID.read();
-    if (RDM6300.decode(c))
-      Serial.println("ID TAG: " + RDM6300.result());
+    if (RDM6300.decode(c)){
+      // Cria mensagem
+      String tag_string = "{\"TAG\": \""+RDM6300.result()+"\"}";
+
+      // Passa para const char*
+      const char* tag = tag_string.c_str();
+
+      //Publica e imprime
+      client.publish(topic, tag);
+      Serial.println(tag);
+    }
   }
+  client.loop();
 }}
 
 bool connectMQTT() {
