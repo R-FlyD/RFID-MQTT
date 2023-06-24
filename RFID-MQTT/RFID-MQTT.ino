@@ -68,6 +68,10 @@ void setup(void)
 }
 
 void loop() {if (mqttStatus){
+  delay(1000);
+  String temp = "{\"tag\": \"1F003F8A67\"}";
+  client.publish(topic, temp.c_str());
+
   //Apaga o led
   delay(100);
   digitalWrite(Led, HIGH);
@@ -80,7 +84,7 @@ void loop() {if (mqttStatus){
     uint8_t c = RFID.read();
     if (RDM6300.decode(c)){
       // Cria mensagem
-      String tag_string = "{\"TAG\": \""+RDM6300.result()+"\"}";
+      String tag_string = "{\"tag\": \""+RDM6300.result()+"\"}";
 
       // Passa para const char*
       const char* tag = tag_string.c_str();
