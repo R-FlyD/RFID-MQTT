@@ -16,6 +16,7 @@ const int mqtt_port = 1883;                       //Porta
 
 //Configura o led na porta digital D2
 int Led = D4;
+int rele = D7;
 
 //Variáveis
 bool mqttStatus = 0;
@@ -41,6 +42,7 @@ void setup(void)
   // RFID 
   //Define o pino do led como saida
   pinMode(Led, OUTPUT);
+  pinMode(rele, OUTPUT);
   
   //Inicializa a serial para o leitor RDM6300
   RFID.begin(9600);
@@ -126,10 +128,11 @@ void callback(char* topic, byte* payload, unsigned int length)
        char c = (char)payload[i];
        msg += c;
     }
-   
     //toma ação dependendo da string recebida:
-    if (msg.equals("OI"))
-      Serial.println("OI");
+    if (msg.equals("RFID"))
+      digitalWrite(rele, LOW);
+    else if (msg.equals("Carregar"))
+      digitalWrite(rele, HIGH);
      
 }
 
